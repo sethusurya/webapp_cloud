@@ -43,6 +43,10 @@ const postUserAccountById = (req, res) => {
                 // no user existed, so we create new user
                 const password = await bcrypt.hash(body.password, saltRounds);
                 const currentTime = moment().toISOString();
+                const {username} = body;
+                const emailRegex = new RegExp(/^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/, "gm");
+                const isValidUsername = emailRegex.test(username);
+                if (!isValidUsername) return res.status(400).send("Invalid Username")
                 const newUser = {
                     id: uuid(),
                     ...body,
@@ -68,6 +72,40 @@ const postUserAccountById = (req, res) => {
 
 const updateUserAccountById = (req, res) => {
  const { user } = req;
+ const {accountId} = req.params;
+ if (user.id != accountId) return res.sendStatus(403)
+ if (req.body) {
+    pool.query('select * from accounts where id=$1',[accountId], async (error, results) => {
+        if (error) {
+          return res.sendStatus(400)
+        }
+    
+        let newUser = {}
+        if (results.rowCount == 1) {
+            newUser = results.rows[0]
+            if (req.body.username || req.body.id || req.body.account_created || req.body.account_updated) return res.sendStatus(400); // rejecting update
+            if (req.body.password || req.body.first_name || req.body.last_name) {
+                if (req.body.password) {
+                    newUser.password = await bcrypt.hash(req.body.password, saltRounds);
+                }
+                if (req.body.first_name) newUser.first_name = req.body.first_name;
+                if (req.body.last_name) newUser.last_name = req.body.last_name;
+                newUser.account_updated = moment().toISOString();
+                //update to database
+                pool.query('UPDATE accounts SET password=$1, first_name=$2, last_name=$3, account_updated=$4 WHERE id=$5',[newUser.password, newUser.first_name, newUser.last_name, newUser.account_updated, accountId], (error, results) => {
+                    if (error) {
+                        return res.sendStatus(400);
+                    }
+                    return res.sendStatus(204);
+                })
+            } else {
+                return res.sendStatus(400);
+            }
+        }
+      })
+ } else {
+    return res.sendStatus(400);
+ }
 };
 
 const init = () => {
