@@ -5,7 +5,6 @@ const app = express();
 const api = supertest(app)
 
 app.get("/healthz", (req, res) => {
-    console.log("testing ci")
     res.sendStatus(200);
   });
 
