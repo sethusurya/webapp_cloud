@@ -57,7 +57,6 @@ const postUserAccountById = (req, res) => {
                 // Save it to database
                 pool.query('INSERT INTO accounts (id, first_name, last_name, password, username, account_created, account_updated) VALUES ($1,$2,$3,$4,$5,$6,$7)',[newUser.id, newUser.first_name, newUser.last_name, newUser.password, newUser.username, newUser.account_created, newUser.account_updated], (error, results) => {
                     if (error) {
-                        console.log("error", error)
                       return res.sendStatus(400)
                     }
                     delete newUser.password
