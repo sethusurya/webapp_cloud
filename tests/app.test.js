@@ -5,7 +5,7 @@ const app = express();
 const api = supertest(app)
 
 app.get("/healthz", (req, res) => {
-    res.sendStatus(400);
+    res.sendStatus(200);
   });
 
 test('HTTP Status code is 200, OK', async () => { 
