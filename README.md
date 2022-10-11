@@ -13,7 +13,7 @@
 5. Open postman and navigate to url
    > http://localhost:3000/healthz
    
-###### INSTRUCTIONS FOR ASSIGNMENT 2
+###### INSTRUCTIONS FOR ASSIGNMENT 2 cont
 
 1. Install Postgres in local computer
 2. Access postgres as root user
