@@ -3,26 +3,27 @@ const DEF = require("../definition")
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const moment = require("moment-timezone");
-const { pool } = require("../queries");
 const { authenticate } = require("../middleware.js");
+const { accounts } = require("../queries");
 
 
 const getUserAccountById = (req, res) => {
  const { user } = req;
  const { accountId } = req.params;
  if (user.id == accountId) {
-     pool.query('select * from accounts where id=$1',[accountId], (error, results) => {
-        if (error) {
-          return res.sendStatus(400)
-        }
-    
-        let finalData = {}
-        if (results.rowCount == 1) {
-            finalData = results.rows[0]
-            delete finalData.password;
-        }
-        return res.send(finalData);
-      })
+    accounts.findOne({ where: { id: accountId } })
+            .then((res1) => {
+                if(res1 && res1.dataValues) {
+                    let result = res1.dataValues
+                    delete result.password;
+                    return res.send(result)
+                }
+            })
+            .catch((err) => {
+                res.status(500).send({
+                    message: err.message || "Error connecting to DB"
+                })
+            })
  } else {
     return res.sendStatus(403);
  }
@@ -31,15 +32,9 @@ const getUserAccountById = (req, res) => {
 const postUserAccountById = (req, res) => {
     const { body } = req
         if (body && body.first_name && body.last_name && body.username && body.password) {
-            // check if the username already exists
-            pool.query('select * from accounts where username=$1',[body.username], async (error, results) => {
-                if (error) {
-                  return res.sendStatus(400)
-                }
-                if (results.rowCount > 0 ) { // rowCount would be greater than 0 if users existed with same username
-                    return res.status(400).send("User already exists!");
-                }
-
+            accounts.findOne({ where: { username: body.username } })
+            .then(async (res1) => {
+                if (res1) return res.status(400).send("User already exists!");
                 // no user existed, so we create new user
                 const password = await bcrypt.hash(body.password, saltRounds);
                 const currentTime = moment().toISOString();
@@ -54,15 +49,26 @@ const postUserAccountById = (req, res) => {
                     account_created: currentTime,
                     account_updated: currentTime
                 }
-                // Save it to database
-                pool.query('INSERT INTO accounts (id, first_name, last_name, password, username, account_created, account_updated) VALUES ($1,$2,$3,$4,$5,$6,$7)',[newUser.id, newUser.first_name, newUser.last_name, newUser.password, newUser.username, newUser.account_created, newUser.account_updated], (error, results) => {
-                    if (error) {
-                      return res.sendStatus(400)
+                accounts.create(newUser)
+                .then((values) => {
+                    if(values && values.dataValues) {
+                        let result = values.dataValues
+                        delete result.password;
+                        return res.send(result)
                     }
-                    delete newUser.password
-                    return res.send(newUser)
-                  })
-            });
+                    new Error("Unable to create account")
+                })
+                .catch((err) => {
+                    res.status(500).send({
+                        message: err.message || "Error while saving to database"
+                    })
+                })
+            })
+            .catch((err1) => {
+                res.status(500).send({
+                    message: err1.message || "Error while querying from database"
+                })
+            })
 
         } else {
             return res.sendStatus(400)
@@ -74,14 +80,12 @@ const updateUserAccountById = (req, res) => {
  const {accountId} = req.params;
  if (user.id != accountId) return res.sendStatus(403)
  if (req.body) {
-    pool.query('select * from accounts where id=$1',[accountId], async (error, results) => {
-        if (error) {
-          return res.sendStatus(400)
-        }
-    
+    accounts.findOne({ where: { id: accountId }})
+    .then(async (res1) => {
+
         let newUser = {}
-        if (results.rowCount == 1) {
-            newUser = results.rows[0]
+        if (res1 && res1.dataValues) {
+            newUser = res1.dataValues;
             if (req.body.username || req.body.id || req.body.account_created || req.body.account_updated) return res.sendStatus(400); // rejecting update
             if (req.body.password || req.body.first_name || req.body.last_name) {
                 if (req.body.password) {
@@ -90,17 +94,31 @@ const updateUserAccountById = (req, res) => {
                 if (req.body.first_name) newUser.first_name = req.body.first_name;
                 if (req.body.last_name) newUser.last_name = req.body.last_name;
                 newUser.account_updated = moment().toISOString();
-                //update to database
-                pool.query('UPDATE accounts SET password=$1, first_name=$2, last_name=$3, account_updated=$4 WHERE id=$5',[newUser.password, newUser.first_name, newUser.last_name, newUser.account_updated, accountId], (error, results) => {
-                    if (error) {
-                        return res.sendStatus(400);
-                    }
+                accounts.update({
+                    password: newUser.password,
+                    first_name: newUser.first_name,
+                    last_name: newUser.last_name,
+                    account_updated: newUser.account_updated
+                }, {
+                    where: { id: accountId }
+                })
+                .then((result) => {
                     return res.sendStatus(204);
+                })
+                .catch((error) => {
+                    return res.status(500).send({
+                        message: error.message || "Error while updating in database"
+                    })
                 })
             } else {
                 return res.sendStatus(400);
             }
         }
+      })
+      .catch((err1) => {
+        res.status(500).send({
+            message: err1.message || "Error while querying from database"
+        })
       })
  } else {
     return res.sendStatus(400);
