@@ -37,6 +37,16 @@ variable "ami_region" {
   default = "us-east-1"
 }
 
+variable "AWS_ACCESS_KEY_ID" {
+  type    = string
+  default = ""
+}
+
+variable "AWS_SECRET_ACCESS_KEY" {
+  type    = string
+  default = ""
+}
+
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   // profile = "dev"
