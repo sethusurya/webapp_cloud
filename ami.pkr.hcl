@@ -39,9 +39,9 @@ variable "ami_region" {
 
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
-  profile = "dev"
-  // access_key    = "${var.AWS_ACCESS_KEY_ID}"
-  // secret_key    = "${var.AWS_SECRET_ACCESS_KEY}"
+  // profile = "dev"
+  access_key    = "${var.AWS_ACCESS_KEY_ID}"
+  secret_key    = "${var.AWS_SECRET_ACCESS_KEY}"
   region        = "${var.ami_region}"
   instance_type = "t2.micro"
   source_ami    = "${var.source_ami}"

@@ -1,0 +1,25 @@
+name: Validate Packer file
+on: 
+  pull_request:
+    branches: [main]
+jobs:
+  packer-validate:
+    name: is packer valid?
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Step 2 - Packer Init
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: init
+          target: ami.pkr.hcl
+
+      - name: Step 3 - Packer Validate
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: validate
+          # arguments: -var-file=variables.pkrvars.hcl -syntax-only
+          target: ami.pkr.hcl
