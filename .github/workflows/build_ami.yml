@@ -1,0 +1,33 @@
+name: Build ami
+on: 
+  push:
+    branches: [main]
+jobs:
+  packer_build:
+    runs-on: ubuntu-latest
+    name: Build AMI
+    steps:
+      - name: Step 1 - Checkout code
+        uses: actions/checkout@v2
+
+      # - name: install npm modules
+      #   run: npm ci --production
+
+      - name: zip files
+        run: |
+          zip -r webapp.zip ./
+          
+      - name: Step 2 - Packer Init
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: init
+          target: ami.pkr.hcl
+      
+      - name: Step 3 - Build Artifact
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: build
+          arguments: -var=AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} -var=AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} -on-error=abort
+          target: ami.pkr.hcl
+        env:
+          PACKER_LOG: 1
