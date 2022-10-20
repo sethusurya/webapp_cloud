@@ -27,10 +27,10 @@ variable "subnet_id" {
   default = "subnet-02674ed652f6c6006"
 }
 
-// variable "ami_name" {
-//   type    = string
-//   default = "csye6225_fall2022_{{timestamp}}"
-// }
+variable "ami_name" {
+  type    = string
+  default = "csye6225_fall2022_{{timestamp}}"
+}
 
 variable "ami_region" {
   type    = string
