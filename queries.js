@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const DEF = require("./definition")
 
-const sequelize = new Sequelize('api', 'me', 'password', {
+const sequelize = new Sequelize('api', 'postgres', 'password', {
   host: 'localhost',
   dialect: 'postgres'
 });
