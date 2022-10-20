@@ -4,12 +4,12 @@ on:
     branches: [main]
 jobs:
   packer-validate:
-    needs: check-api
     name: is packer valid?
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
+        if: steps.unitTest.outputs.conclusion == 'success'
         uses: actions/checkout@v2
 
       - name: Step 2 - Packer Init
