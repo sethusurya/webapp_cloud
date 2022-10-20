@@ -17,9 +17,17 @@ jobs:
           command: init
           target: ami.pkr.hcl
 
+      - name: zip files
+        run: |
+          zip -r webapp.zip ./
+
       - name: Step 3 - Packer Validate
         uses: hashicorp/packer-github-actions@master
         with:
           command: validate
-          arguments: -syntax-only
+          # arguments: -syntax-only
           target: ami.pkr.hcl
+      
+      - name: delete zip
+        run: |
+          rm -f webapp.zip
