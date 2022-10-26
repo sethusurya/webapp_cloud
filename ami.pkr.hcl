@@ -35,7 +35,7 @@ variable "ami_name" {
 variable "ami_region" {
   type    = string
   default = "us-east-1"
-
+}
 
 variable "AWS_ACCESS_KEY_ID" {
   type    = string
