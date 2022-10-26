@@ -19,6 +19,8 @@
   "dependencies": {
     "basic-auth": "^2.0.1",
     "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "moment-timezone": "^0.5.37",
     "nodemon": "^2.0.20",
