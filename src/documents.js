@@ -9,13 +9,19 @@ const multerS3 = require('multer-s3')
 require('dotenv').config()
 const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3')
 
-const s3 = new S3Client({
-    credentials: {
-        accessKeyId: process.env.S3ACCESS_KEY_ID,
-        secretAccessKey: process.env.S3SECRET_KEY,
-    },
-    region: process.env.S3REGION
-  })
+if (process.env.S3ACCESS_KEY_ID && process.env.S3SECRET_KEY) {
+    const s3 = new S3Client({
+        credentials: {
+            accessKeyId: process.env.S3ACCESS_KEY_ID,
+            secretAccessKey: process.env.S3SECRET_KEY,
+        },
+        region: process.env.S3REGION
+      })
+} else {
+    const s3 = new S3Client({
+        region: process.env.S3REGION
+      })
+}
 
 const BUCKET_NAME = process.env.AWS_BUCKET_NAME
 
