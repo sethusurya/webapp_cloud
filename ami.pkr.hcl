@@ -47,6 +47,11 @@ variable "AWS_SECRET_ACCESS_KEY" {
   default = ""
 }
 
+variable "AWS_USERS" {
+  type = list(string)
+  default = []
+}
+
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   // profile = "dev"
@@ -57,10 +62,7 @@ source "amazon-ebs" "my-ami" {
   source_ami    = "${var.source_ami}"
   ssh_username  = "${var.ssh_username}"
   ami_name      = "${var.ami_name}"
-  ami_users = [
-    222574438505, //prod
-    // 455547921672 //dev
-  ]
+  ami_users = "${var.AWS_USERS}"
   ami_description = "AMI for CSYE 6225"
   ami_regions = [
     "us-east-1",
