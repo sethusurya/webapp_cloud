@@ -6,17 +6,17 @@ echo "Assignment 4"
 sudo apt-get update
 sudo apt-get upgrade -y
 
-# installing postgresql
-sudo apt install postgresql -y
+# # installing postgresql
+# sudo apt install postgresql -y
 
-# Creating database called api
-sudo -u postgres psql -c "CREATE DATABASE api;"
+# # Creating database called api
+# sudo -u postgres psql -c "CREATE DATABASE api;"
 
 # giving permission because of permission errors
 sudo chmod 755 /home/ubuntu
 
-# change password for postgres user for allowing application to connect
-sudo -u postgres psql -c "ALTER USER postgres with PASSWORD 'password';"
+# # change password for postgres user for allowing application to connect
+# sudo -u postgres psql -c "ALTER USER postgres with PASSWORD 'password';"
 
 # # install nodejs via nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash

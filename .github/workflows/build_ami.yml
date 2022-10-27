@@ -1,7 +1,7 @@
 name: Build ami
 on: 
   push:
-    branches: [main]
+    branches: [main, workflow_dispatch]
 jobs:
   packer_build:
     runs-on: ubuntu-latest
