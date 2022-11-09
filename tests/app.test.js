@@ -1,7 +1,6 @@
 const supertest = require('supertest');
 const express = require('express');
 const app = express();
-
 const api = supertest(app)
 
 app.get("/healthz", (req, res) => {
