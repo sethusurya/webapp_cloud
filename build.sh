@@ -32,7 +32,18 @@ nvm install 16.18.0
 cd ~/webapp
 npm install
 npm install pm2@latest -g
-pm2 start server.js
-pm2 startup systemd
-sudo env PATH=$PATH:/home/ubuntu/.nvm/versions/node/v16.18.0/bin /home/ubuntu/.nvm/versions/node/v16.18.0/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
+sudo mkdir -p ~/logs
+pm2 startup systemd --service-name webapp
+sudo pm2 startOrReload ecosystem.config.js
 pm2 save
+sudo env PATH=$PATH:/home/ubuntu/.nvm/versions/node/v16.18.0/bin /home/ubuntu/.nvm/versions/node/v16.18.0/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
+
+sudo apt-get install wget -y
+
+# install cloudwatch agent
+wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+
+sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
+
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/home/ubuntu/webapp/amazon-cloudwatch-config.json
+
