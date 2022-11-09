@@ -5,11 +5,13 @@ const saltRounds = 10;
 const moment = require("moment-timezone");
 const { authenticate } = require("../middleware.js");
 const { accounts } = require("../queries");
-
+// create a stdout console logger
+const logger = require('simple-node-logger').createSimpleLogger();
 
 const getUserAccountById = (req, res) => {
- const { user } = req;
- const { accountId } = req.params;
+    const { user } = req;
+    const { accountId } = req.params;
+    logger.info('getUserAccountById', req.params.accountId)
  if (user.id == accountId) {
     accounts.findOne({ where: { id: accountId } })
             .then((res1) => {
@@ -49,6 +51,7 @@ const postUserAccountById = (req, res) => {
                     account_created: currentTime,
                     account_updated: currentTime
                 }
+                logger.info('Creating new user', newUser.id);
                 accounts.create(newUser)
                 .then((values) => {
                     if(values && values.dataValues) {
@@ -94,6 +97,7 @@ const updateUserAccountById = (req, res) => {
                 if (req.body.first_name) newUser.first_name = req.body.first_name;
                 if (req.body.last_name) newUser.last_name = req.body.last_name;
                 newUser.account_updated = moment().toISOString();
+                logger.info('updating user', newUser.id)
                 accounts.update({
                     password: newUser.password,
                     first_name: newUser.first_name,

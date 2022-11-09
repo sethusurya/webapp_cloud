@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require("cors");
 const AWS = require("aws-sdk");
 require('dotenv').config()
+const logger = require('simple-node-logger').createSimpleLogger();
 
 const app = express()
 app.use(bodyParser.json());
@@ -17,6 +18,7 @@ app.use(
 DEF.COM.EXPRESS_APP = app;
 
 API.init();
+logger.info('Starting application')
 
 module.exports = {
     app,

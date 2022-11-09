@@ -8,6 +8,7 @@ const multer  = require('multer')
 const multerS3 = require('multer-s3')
 require('dotenv').config()
 const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3')
+const logger = require('simple-node-logger').createSimpleLogger();
 
 let s3 = new S3Client({
     region: process.env.S3REGION
@@ -34,6 +35,7 @@ const uploadDocument = (req, res) => {
         date_created: moment().toISOString(),
         s3_bucket_path: req.file.location
     }
+    logger.info(`${req.user.id}-Uploading document`, newDocument.doc_id)
     documents.create(newDocument)
     .then((values) => {
         if(values) {
@@ -63,6 +65,7 @@ const upload = multer({
   });
 
   const getDocuments = (req, res) => {
+    logger.info('Get documents for user', req.user.id)
     documents.findAll({
         where: {
           user_id: req.user.id
@@ -81,6 +84,7 @@ const upload = multer({
   const getDocumentById = (req, res) => {
     const { user } = req;
     const {documentId} = req.params;
+    logger.info(`get user-${user.id} documents by doc-id`, documentId)
     documents.findOne({
         where: {
             doc_id: documentId
@@ -101,6 +105,7 @@ const upload = multer({
   const deleteDocumentById = (req, res) => {
     const { user } = req;
     const {documentId} = req.params;
+    logger.info(`delete user-${user.id} documents by doc-id`, documentId)
     documents.findOne({
         where: {
             doc_id: documentId
