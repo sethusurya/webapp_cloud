@@ -9,6 +9,8 @@ const multerS3 = require('multer-s3')
 require('dotenv').config()
 const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3')
 const logger = require('simple-node-logger').createSimpleLogger();
+const statsDClient = require('statsd-client')
+const sdc = new statsDClient({ host: 'localhost', port: 8125 })
 
 let s3 = new S3Client({
     region: process.env.S3REGION
@@ -27,6 +29,7 @@ const BUCKET_NAME = process.env.AWS_BUCKET_NAME
 
 
 const uploadDocument = (req, res) => {
+    sdc.increment('POST /v1/documents');
     if (!req.file) return res.sendStatus(400)
     newDocument = {
         doc_id: req.file.key,
@@ -65,6 +68,7 @@ const upload = multer({
   });
 
   const getDocuments = (req, res) => {
+    sdc.increment('GET /v1/documents');
     logger.info('Get documents for user', req.user.id)
     documents.findAll({
         where: {
@@ -82,6 +86,7 @@ const upload = multer({
   };
 
   const getDocumentById = (req, res) => {
+    sdc.increment('GET /v1/documents/:documentId');
     const { user } = req;
     const {documentId} = req.params;
     logger.info(`get user-${user.id} documents by doc-id`, documentId)
@@ -103,6 +108,7 @@ const upload = multer({
   };
 
   const deleteDocumentById = (req, res) => {
+    sdc.increment('DELETE /v1/documents/:documentId');
     const { user } = req;
     const {documentId} = req.params;
     logger.info(`delete user-${user.id} documents by doc-id`, documentId)
