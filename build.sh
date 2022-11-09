@@ -29,13 +29,15 @@ export NVM_DIR="$HOME/.nvm"
 nvm install 16.18.0
 
 # install pm2 process management
+sudo mkdir -p ~/logs
+sudo chmod 777 logs
 cd ~/webapp
 npm install
 npm install pm2@latest -g
-sudo mkdir -p ~/logs
-pm2 startup systemd --service-name webapp
-sudo pm2 startOrReload ecosystem.config.js
+pm2 start server.js --name webapp
+pm2 startOrReload ecosystem.config.js
 pm2 save
+pm2 startup systemd
 sudo env PATH=$PATH:/home/ubuntu/.nvm/versions/node/v16.18.0/bin /home/ubuntu/.nvm/versions/node/v16.18.0/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
 
 sudo apt-get install wget -y

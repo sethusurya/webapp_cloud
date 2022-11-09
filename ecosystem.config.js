@@ -2,8 +2,7 @@ module.exports = {
     apps: [
         {
             name: 'webapp',
-            script: 'npm',
-            args: 'start',
+            script: './server.js',
             env: {
                 "NODE_ENV": "production",
             },
