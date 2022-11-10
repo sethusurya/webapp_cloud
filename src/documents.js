@@ -86,7 +86,7 @@ const upload = multer({
   };
 
   const getDocumentById = (req, res) => {
-    sdc.increment('GET /v1/documents/:documentId');
+    sdc.increment('GET /v1/documents/documentId');
     const { user } = req;
     const {documentId} = req.params;
     logger.info(`get user-${user.id} documents by doc-id`, documentId)
@@ -108,7 +108,7 @@ const upload = multer({
   };
 
   const deleteDocumentById = (req, res) => {
-    sdc.increment('DELETE /v1/documents/:documentId');
+    sdc.increment('DELETE /v1/documents/documentId');
     const { user } = req;
     const {documentId} = req.params;
     logger.info(`delete user-${user.id} documents by doc-id`, documentId)
