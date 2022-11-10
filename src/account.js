@@ -11,7 +11,7 @@ const statsDClient = require('statsd-client')
 const sdc = new statsDClient({ host: 'localhost', port: 8125 })
 
 const getUserAccountById = (req, res) => {
-    sdc.increment('GET /v1/account/:accountId');
+    sdc.increment('GET /v1/account/accountId');
     const { user } = req;
     const { accountId } = req.params;
     logger.info('getUserAccountById', req.params.accountId)
@@ -83,7 +83,7 @@ const postUserAccountById = (req, res) => {
 };
 
 const updateUserAccountById = (req, res) => {
-sdc.increment('PUT /v1/account/:accountId');
+sdc.increment('PUT /v1/account/accountId');
  const { user } = req;
  const {accountId} = req.params;
  if (user.id != accountId) return res.sendStatus(403)
