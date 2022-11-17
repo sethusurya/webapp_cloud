@@ -19,10 +19,12 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.197.0",
     "@aws-sdk/lib-storage": "^3.197.0",
+    "@sendgrid/mail": "^7.7.0",
     "aws-sdk": "^2.1241.0",
     "basic-auth": "^2.0.1",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "moment-timezone": "^0.5.37",

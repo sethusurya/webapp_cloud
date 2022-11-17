@@ -41,6 +41,19 @@ pm2 save
 
 sudo apt-get install wget -y
 
+
+# codedeploy steps
+sudo apt install ruby-full -y
+
+# installation of codedeploy
+cd /home/ubuntu
+wget https://aws-codedeploy-$CURRENTREGION.s3.$CURRENTREGION.amazonaws.com/latest/install
+chmod +x ./install
+# install latest agent
+sudo ./install auto
+# sudo service codedeploy-agent start
+sudo service codedeploy-agent status
+
 # install cloudwatch agent
 wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
 

@@ -34,6 +34,13 @@ const accounts = sequelize.define('accounts', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  verified: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
+  },
+  verified_on: {
+    type: Sequelize.DATE
+  },
   account_created: {
     type: DataTypes.STRING,
     allowNull: false
