@@ -10,6 +10,7 @@ const authenticate = async (req, res, next) => {
         .then(async (result) => {
             if (!result) return res.sendStatus(401);
             let myUser = result.dataValues;
+            if (!myUser.verified) return res.status(400).send("User not verified")
             if (await bcrypt.compare(password, myUser.password)) {
                 delete myUser.password;
                 req.user = myUser; // forwarding user object within request
