@@ -236,7 +236,7 @@ const verifyUser = (req, res) => {
                         where: { username: email }
                     })
                     .then((result) => {
-                        return res.sendStatus(204);
+                        return res.status(204).send("Verification Success");
                     })
                     .catch((error) => {
                         return res.status(500).send({
