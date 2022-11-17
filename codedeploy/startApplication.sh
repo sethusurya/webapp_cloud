@@ -12,5 +12,5 @@ pwd
 ls -al
 echo "Start webapp and reload"
 # start cloudwatch agent
-pm2 restart/reload ecosystem.config.js --update-env
+pm2 reload ecosystem.config.js --update-env
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/home/ubuntu/webapp/amazon-cloudwatch-config.json
