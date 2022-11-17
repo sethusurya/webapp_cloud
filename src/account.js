@@ -68,11 +68,12 @@ const postUserAccountById = (req, res) => {
 
                         let emailID = newUser.username
                         let token = crypto.randomBytes(16).toString("hex")
-                        ttlExpirationTime = Math.floor(Date.now() / 1000) + 120
+                        ttlExpirationTime = Math.floor(Date.now() / 1000) + process.env.tokenExpireSeconds
                 
                         // Dynamo db add new token and email
                         logger.info("Adding email and token to DynamoDB")
                         logger.info('Email', emailID)
+                        logger.info('token',token)
                         logger.info('ttl', ttlExpirationTime)
                 
                         // body parameters for adding data
@@ -199,16 +200,17 @@ sdc.increment('PUT /v1/account/accountId');
 };
 
 const verifyUser = (req, res) => {
-    const { email, token} = req.params
+    const { email, token} = req.query
     if (!email || !token) return res.status(400).send({
         message: "Data for user verification is incomplete"
     })
     // check if user exists
-    accounts.findOne({ where : { username: email}})
+    accounts.findOne({ where : { username: decodeURIComponent(email) }})
     .then((response) => {
-        if (response) {
-            let existingUser = response;
-            if (response.verified) return res.status(400).send({ message: "User already verified"})
+        if (response && response.dataValues) {
+            let existingUser = response.dataValues;
+            logger.info("existingUser : ",existingUser)
+            if (existingUser.verified) return res.status(400).send({ message: "User already verified"})
 
             // get token for the user from dynamodb with ttl
             let getEmailParams = {
@@ -243,11 +245,11 @@ const verifyUser = (req, res) => {
                     })
 
                 } else {
-                    return setErrorResponse(`Token has expired, User cannot be verified`, res, 400)
+                    return res.status(400).send(`Token has expired, User cannot be verified`);
                 }
             })
             .catch(function(err) {
-                return setErrorResponse(`Data for given emailid cannot be found`, res, 400)
+                return res.status(400).send(`Data for given emailid cannot be found`)
             });
         } else {
             new Error("No User found")
