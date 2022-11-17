@@ -68,13 +68,13 @@ const postUserAccountById = (req, res) => {
 
                         let emailID = newUser.username
                         let token = crypto.randomBytes(16).toString("hex")
-                        ttlExpirationTime = Math.floor(Date.now() / 1000) + process.env.tokenExpireSeconds
+                        ttlExpirationTime = Math.floor(Date.now() / 1000) + parseInt(process.env.tokenExpireSeconds)
                 
                         // Dynamo db add new token and email
                         logger.info("Adding email and token to DynamoDB")
                         logger.info('Email', emailID)
                         logger.info('token',token)
-                        logger.info('ttl', ttlExpirationTime)
+                        logger.info('ttl ', ttlExpirationTime)
                 
                         // body parameters for adding data
                         let bodyParams = {

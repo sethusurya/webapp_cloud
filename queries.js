@@ -42,11 +42,11 @@ const accounts = sequelize.define('accounts', {
     type: Sequelize.DATE
   },
   account_created: {
-    type: DataTypes.STRING,
+    type: Sequelize.DATE,
     allowNull: false
   },
   account_updated: {
-    type: DataTypes.STRING,
+    type: Sequelize.DATE,
     allowNull: false
   }
 }, {
