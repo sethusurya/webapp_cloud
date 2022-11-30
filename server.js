@@ -5,8 +5,8 @@ const sdc = new statsDClient({ host: 'localhost', port: 8125 })
 // require('dotenv').config()
 // const sgMail = require('@sendgrid/mail')
 
-app.get("/healthz", (req, res) => {
-  sdc.increment("GET /healthz")
+app.get("/health", (req, res) => {
+  sdc.increment("GET /health")
 
   // sgMail.setApiKey(process.env.SENDGRID_API_KEY)
   // const msg = {
