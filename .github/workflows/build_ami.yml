@@ -4,7 +4,7 @@ env:
   ARTIFACT_NAME: webapp-${{ github.sha }}
 on: 
   push:
-    branches: [main, workflow_dispatch]
+    branches: [main, workflow_dispatch, push]
 jobs:
   # packer_build:
   #   runs-on: ubuntu-latest
@@ -67,7 +67,7 @@ jobs:
           aws configure set region us-east-1
           aws configure set aws_access_key_id ${{ secrets.AWS_GHUSER_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_GHUSER_SECRET_ACCESS_KEY }}
-          aws autoscaling start-instance-refresh --auto-scaling-group-name appstack-webapp-asg --desired-configuration '{"LaunchTemplate": {"LaunchTemplateName": "appstack-asg-launch-template", "Version": "$Latest" }}'
+          aws autoscaling start-instance-refresh --auto-scaling-group-name appstack-webapp-asg --desired-configuration '{"LaunchTemplate": {"LaunchTemplateName": "appstack-asg-launch-template", "Version": '"'$Latest'"' }}'
       
   # code_deploy:
   #   runs-on: ubuntu-latest
