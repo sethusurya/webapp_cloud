@@ -34,8 +34,8 @@ sudo chmod 777 logs
 cd ~/webapp
 npm install
 npm install pm2@latest -g
+pm2 startup systemd --service-name webservice
 pm2 start ecosystem.config.js
-pm2 startup
 sudo env PATH=$PATH:/home/ubuntu/.nvm/versions/node/v16.18.0/bin /home/ubuntu/.nvm/versions/node/v16.18.0/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
 pm2 save
 
