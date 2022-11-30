@@ -48,7 +48,7 @@ jobs:
         run: |
           AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
           echo $AMI_ID
-          aws ec2 create-launch-template-version --launch-template-name appstack-asg-launch-template --launch-template-data '{"ImageId":$AMI_ID}'
+          aws ec2 create-launch-template-version --launch-template-name appstack-asg-launch-template --launch-template-data '{"ImageId":${{ AMI_ID }}}'
           aws autoscaling start-instance-refresh --auto-scaling-group-name appstack-webapp-asg
 
   # code_deploy:
