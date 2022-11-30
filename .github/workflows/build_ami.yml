@@ -6,52 +6,52 @@ on:
   push:
     branches: [main, workflow_dispatch]
 jobs:
-  packer_build:
-    runs-on: ubuntu-latest
-    name: Build AMI
-    steps:
-      - name: Step 1 - Checkout code
-        uses: actions/checkout@v2
+  # packer_build:
+  #   runs-on: ubuntu-latest
+  #   name: Build AMI
+  #   steps:
+  #     - name: Step 1 - Checkout code
+  #       uses: actions/checkout@v2
 
-      # - name: install npm modules
-      #   run: npm ci --production
+  #     # - name: install npm modules
+  #     #   run: npm ci --production
 
-      - name: zip files
-        run: |
-          zip -r webapp.zip ./
+  #     - name: zip files
+  #       run: |
+  #         zip -r webapp.zip ./
           
-      - name: Step 2 - Packer Init
-        uses: hashicorp/packer-github-actions@master
-        with:
-          command: init
-          target: ami.pkr.hcl
+  #     - name: Step 2 - Packer Init
+  #       uses: hashicorp/packer-github-actions@master
+  #       with:
+  #         command: init
+  #         target: ami.pkr.hcl
       
-      - name: Step 3 - Build Artifact
-        uses: hashicorp/packer-github-actions@master
-        with:
-          command: build
-          arguments: -var=AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} -var=AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} -var=AWS_USERS=${{ secrets.AWS_USERS }} -on-error=abort
-          target: ami.pkr.hcl
-        env:
-          PACKER_LOG: 1
+  #     - name: Step 3 - Build Artifact
+  #       uses: hashicorp/packer-github-actions@master
+  #       with:
+  #         command: build
+  #         arguments: -var=AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} -var=AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} -var=AWS_USERS=${{ secrets.AWS_USERS }} -on-error=abort
+  #         target: ami.pkr.hcl
+  #       env:
+  #         PACKER_LOG: 1
 
-      - name: Step 4 - Install AWS Cli
-        run: sudo pip install awscli
+  #     - name: Step 4 - Install AWS Cli
+  #       run: sudo pip install awscli
 
-      - name: Step 5 - Set correct aws environment
-        run: |
-          aws configure set region us-east-1
-          aws configure set aws_access_key_id ${{ secrets.AWS_GHUSER_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_GHUSER_SECRET_ACCESS_KEY }}
+  #     - name: Step 5 - Set correct aws environment
+  #       run: |
+  #         aws configure set region us-east-1
+  #         aws configure set aws_access_key_id ${{ secrets.AWS_GHUSER_ACCESS_KEY_ID }}
+  #         aws configure set aws_secret_access_key ${{ secrets.AWS_GHUSER_SECRET_ACCESS_KEY }}
 
-      - name: Step 6 - create new launch template
-        run: |
-          AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
-          echo '"'$AMI_ID'"'
-          echo '{"ImageId": "'$AMI_ID'"}'
-          aws ec2 create-launch-template-version --launch-template-name appstack-asg-launch-template --launch-template-data '{"ImageId": "'$AMI_ID'"}'
-          aws autoscaling start-instance-refresh --auto-scaling-group-name appstack-webapp-asg --desired-configuration '{"LaunchTemplate": {"LaunchTemplateName": "appstack-asg-launch-template", "Version": "'$Latest'" }}'
-          
+  #     - name: Step 6 - create new launch template
+  #       run: |
+  #         AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
+  #         echo '"'$AMI_ID'"'
+  #         echo '{"ImageId": "'$AMI_ID'"}'
+  #         aws ec2 create-launch-template-version --launch-template-name appstack-asg-launch-template --launch-template-data '{"ImageId": "'$AMI_ID'"}'
+  #         aws autoscaling start-instance-refresh --auto-scaling-group-name appstack-webapp-asg --desired-configuration '{"LaunchTemplate": {"LaunchTemplateName": "appstack-asg-launch-template", "Version": "'$Latest'" }}'
+
   testing:
     runs-on: ubuntu-latest
     name: Run tests
@@ -67,7 +67,6 @@ jobs:
           aws configure set region us-east-1
           aws configure set aws_access_key_id ${{ secrets.AWS_GHUSER_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_GHUSER_SECRET_ACCESS_KEY }}
-          aws ec2 create-launch-template-version --launch-template-name appstack-asg-launch-template --launch-template-data '{"ImageId": "'$AMI_ID'"}'
           aws autoscaling start-instance-refresh --auto-scaling-group-name appstack-webapp-asg --desired-configuration '{"LaunchTemplate": {"LaunchTemplateName": "appstack-asg-launch-template", "Version": "'$Latest'" }}'
       
   # code_deploy:
