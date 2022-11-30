@@ -35,6 +35,20 @@ jobs:
         env:
           PACKER_LOG: 1
 
+      - name: Step 4 - Install AWS Cli
+        run: sudo pip install awscli
+
+      - name: Step 5 - Set correct aws environment
+        run: |
+          aws configure set region us-east-1
+          aws configure set aws_access_key_id ${{ secrets.AWS_GHUSER_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_GHUSER_SECRET_ACCESS_KEY }}
+
+      - name: Step 6 - create new launch template
+        run: |
+          aws ec2 create-launch-template-version --launch-template-name appstack-asg-launch-template --launch-template-data '{"ImageId":$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)}'
+          aws autoscaling start-instance-refresh --auto-scaling-group-name appstack-webapp-asg
+
   # code_deploy:
   #   runs-on: ubuntu-latest
   #   name: Run CodeDeploy
@@ -63,3 +77,8 @@ jobs:
   #         --deployment-group-name csye6225-webapp-deployment \
   #         --file-exists-behavior OVERWRITE \
   #         --s3-location bucket=${{ secrets.AWS_PRODUCTION_CODEDEPLOY_BUCKETNAME }},key=${{ env.ARTIFACT_NAME }}.zip,bundleType=zip \
+
+# aws ec2 create-launch-template-version --launch-template-name appstack-asg-launch-template --launch-template-data '{"ImageId":"ami-c998b6b2"}'
+# aws autoscaling start-instance-refresh --auto-scaling-group-name appstack-webapp-asg
+
+# $(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
