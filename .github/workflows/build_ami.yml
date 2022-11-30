@@ -46,7 +46,8 @@ jobs:
 
       - name: Step 6 - create new launch template
         run: |
-          aws ec2 create-launch-template-version --launch-template-name appstack-asg-launch-template --launch-template-data '{"ImageId":$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)}'
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
+          aws ec2 create-launch-template-version --launch-template-name appstack-asg-launch-template --launch-template-data '{"ImageId":$AMI_ID}'
           aws autoscaling start-instance-refresh --auto-scaling-group-name appstack-webapp-asg
 
   # code_deploy:
