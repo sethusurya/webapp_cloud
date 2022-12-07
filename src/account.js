@@ -272,7 +272,7 @@ const init = () => {
         return;
     }
     app.get("/v1/account/:accountId", authenticate, getUserAccountById);
-    app.post("/v1/account", postUserAccountById);
+    app.post("/v2/account", postUserAccountById);
     app.put("/v1/account/:accountId", authenticate, updateUserAccountById);
     app.get("/v1/verifyUserEmail", verifyUser);
 };
