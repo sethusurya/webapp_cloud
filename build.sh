@@ -18,26 +18,26 @@ sudo chmod 755 /home/ubuntu
 # # change password for postgres user for allowing application to connect
 # sudo -u postgres psql -c "ALTER USER postgres with PASSWORD 'password';"
 
-# # install nodejs via nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
+# # # install nodejs via nvm
+# curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # installing specific node version
-nvm install 16.18.0
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - &&\
+sudo apt-get install -y nodejs
 
 # install pm2 process management
 sudo mkdir -p ~/logs
 sudo chmod 777 logs
 cd ~/webapp
 npm install
-npm install pm2@latest -g
-pm2 startup systemd --service-name webservice
-pm2 start ecosystem.config.js
-sudo env PATH=$PATH:/home/ubuntu/.nvm/versions/node/v16.18.0/bin /home/ubuntu/.nvm/versions/node/v16.18.0/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
-pm2 save
+sudo npm install pm2@latest -g
+sudo pm2 startup
+sudo pm2 start ecosystem.config.js
+sudo pm2 save
 
 sudo apt-get install wget -y
 
